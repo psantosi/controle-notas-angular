@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-form-field appearance="fill">
+    <mat-label>Turmas</mat-label>
+    <form [formGroup]="form">
+      <mat-select formControlName="class" (selectionChange)="listStudents()">
+        <mat-option *ngFor="let class of classes | async" [value]="class.id">{{class.name}}</mat-option>
+      </mat-select>
+    </form>
+  </mat-form-field>
+
+  <button mat-mini-fab color="accent" class="btn-add">
+    <mat-icon (click)="onAddClass()">add</mat-icon>
+  </button>
+  <button mat-mini-fab color="primary" class="btn-add">
+    <mat-icon (click)="onAddTask()">task</mat-icon>
+  </button>
+
+  <div *ngIf="(students | async)?.length===0 && form.value.class">
+    <mat-toolbar>Turma</mat-toolbar>
+
+    <h4 align="center">Adicionar novo aluno
+      <button mat-mini-fab color="accent">
+        <mat-icon (click)="onAddStudent()">add</mat-icon>
+      </button>
+    </h4>
+  </div>
+
+  <div *ngIf="(students | async)?.length!==0">
+    <mat-toolbar>Turma</mat-toolbar>
+
+    <table mat-table [dataSource]="students" class="mat-elevation-z8 student-table">
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let student"> {{ student.name }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="average">
+        <th mat-header-cell *matHeaderCellDef> Média de notas </th>
+        <td mat-cell *matCellDef="let student"> {{ student.average }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          <button mat-mini-fab color="accent" class="action-column-header">
+            <mat-icon (click)="onAddStudent()">add</mat-icon>
+          </button>
+        </th>
+        <td mat-cell *matCellDef="let student">
+          <button mat-icon-button color="primary" (click)="onEditStudent(student.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDeleteStudent(student.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-icon-button (click)="showGrades(student.id)">
+            <mat-icon>grade</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</mat-card>
+
